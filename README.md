@@ -1,7 +1,7 @@
 <img src="https://github.com/IAmNotAlone-Hot6ix/hotSix_FE/assets/121710757/f67b9990-ec71-4c39-9b6e-915fbb5ec715" width="400" />  <br/><br/><br/><br/>
 ## 하우스 메이트를 찾는 커뮤니티 플랫폼
  <div align="center"><h2><a href="https://www.notion.so/f4694b3385254cd398300ccab5aa72ea">프로젝트 노션</a></h2></div>
-<div align="center"><h2><a href="https://team-project-zerobase.vercel.app/">Demo</a></h2> <span>ID: jinhyeon0810@gmail.com / PW : test1234</span></div>
+<div align="center"><h2><a href="https://iam-notalone.vercel.app/">Demo</a></h2> <span>ID: jinhyeon0810@gmail.com / PW : test1234</span></div>
 <br/><br/>
 
 ## 프로젝트 소개
