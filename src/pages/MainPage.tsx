@@ -2,7 +2,7 @@ import BoardCard from "../components/Main/BoardCard";
 import Footer from "../components/common/Footer";
 import Header from "../components/Main/Header";
 import { RxTriangleDown } from "react-icons/rx";
-import { useEffect, useState, useCallback, useRef, Suspense } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense, useTransition } from "react";
 import { FaPencilAlt } from "react-icons/fa";
 // import AreaModal from "../components/Main/AreaModal";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +50,7 @@ const getHasRoomPostData = ApiCallModule.getHasRoomPostData;
 const AreaModal = lazy(() => import("../components/Main/AreaModal"));
 
 const MainPage = () => {
+  const [, startTransition] = useTransition();
   const navigate = useNavigate();
   const recommend = useAtomValue(recommendAtom);
   const [recommendData, setRecommendData] = useState([]);
@@ -111,7 +112,9 @@ const MainPage = () => {
 
   //지역정보 (모달창) 보기
   const handleAreaModal = () => {
-    setActiveAreaModal(!activeAreaModal);
+    startTransition(() => {
+      setActiveAreaModal(!activeAreaModal);
+    });
   };
 
   //첫화면 지역데이터 가져오기

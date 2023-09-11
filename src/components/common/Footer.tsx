@@ -2,6 +2,7 @@ import { HiOutlineChatBubbleLeftRight, HiUserCircle, HiOutlineUserCircle, HiChat
 import { AiOutlineHeart, AiFillHeart, AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BsHandThumbsUp, BsHandThumbsUpFill } from "react-icons/bs";
+import { useTransition } from "react";
 
 interface Props {
   selected: boolean;
@@ -9,27 +10,39 @@ interface Props {
 }
 
 const Footer = ({ userId }: Props) => {
+  const [, startTransition] = useTransition();
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const moveToHome = () => {
-    navigate("/main");
+    startTransition(() => {
+      navigate("/main");
+    });
   };
 
   const moveToCart = () => {
-    navigate("/cart");
+    startTransition(() => {
+      navigate("/cart");
+    });
   };
 
   const moveToChat = () => {
-    navigate("/chatlist");
+    startTransition(() => {
+      navigate("/chatlist");
+    });
   };
 
   const moveToProfile = () => {
-    navigate(`/profile/${userId}`);
+    startTransition(() => {
+      navigate(`/profile/${userId}`);
+    });
   };
 
   const moveToRecommend = () => {
-    navigate("/recommend");
+    startTransition(() => {
+      navigate("/recommend");
+    });
   };
 
   return (
