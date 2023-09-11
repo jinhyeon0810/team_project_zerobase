@@ -2,7 +2,7 @@ import BoardCard from "../components/Main/BoardCard";
 import Footer from "../components/common/Footer";
 import Header from "../components/Main/Header";
 import { RxTriangleDown } from "react-icons/rx";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { FaPencilAlt } from "react-icons/fa";
 // import AreaModal from "../components/Main/AreaModal";
 import { useNavigate } from "react-router-dom";
@@ -218,7 +218,11 @@ const MainPage = () => {
             <div className="absolute bottom-2 right-2 cursor-pointer">
               <RxTriangleDown className="text-3xl text-main-300" />
             </div>
-            {activeAreaModal && <AreaModal regionList={regionList} handleRegionArea={handleRegionArea} />}
+            {activeAreaModal && (
+              <Suspense fallback={<h1>Loading...</h1>}>
+                <AreaModal regionList={regionList} handleRegionArea={handleRegionArea} />
+              </Suspense>
+            )}
           </div>
 
           <RoomExistence handleFindRoom={handleFindRoom} handleHasRoom={handleHasRoom} />
@@ -265,7 +269,7 @@ const MainPage = () => {
         </section>
       </div>
       <div ref={target}></div>
-      <Footer selected={false} userId={userId} />
+      <Footer selected={false} userId={userId} />{" "}
     </>
   );
 };

@@ -24,7 +24,9 @@ function App() {
     <Provider>
       <CookiesProvider>
         <QueryClientProvider client={queryClient}>
-          <Suspense fallback={<h1>Loading...</h1>}>
+          <Suspense
+            fallback={<h1 style={{ width: "100vw", height: "100vh", background: "#EEF1FF", textAlign: "center", fontSize: "40px" }}>Loading...</h1>}
+          >
             <Routes>
               <Route path="/" element={<SigninPage />}></Route>
               <Route path="/login/oauth2/code/kakao" element={<GetCode />}></Route>
@@ -49,4 +51,5 @@ function App() {
     </Provider>
   );
 }
+
 export default App;
