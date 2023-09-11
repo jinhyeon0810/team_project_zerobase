@@ -222,7 +222,11 @@ const MainPage = () => {
               <RxTriangleDown className="text-3xl text-main-300" />
             </div>
             {activeAreaModal && (
-              <Suspense fallback={<h1>Loading...</h1>}>
+              <Suspense
+                fallback={
+                  <h1 style={{ width: "100vw", height: "100vh", background: "#EEF1FF", textAlign: "center", fontSize: "10px" }}>Loading...</h1>
+                }
+              >
                 <AreaModal regionList={regionList} handleRegionArea={handleRegionArea} />
               </Suspense>
             )}
