@@ -4,10 +4,8 @@ import Header from "../components/Main/Header";
 import { RxTriangleDown } from "react-icons/rx";
 import { useEffect, useState, useCallback, useRef, Suspense, useTransition } from "react";
 import { FaPencilAlt } from "react-icons/fa";
-// import AreaModal from "../components/Main/AreaModal";
 import { useNavigate } from "react-router-dom";
-import { SetStateAction, useAtom, useAtomValue } from "jotai";
-import { Dispatch } from "react";
+import { useAtom, useAtomValue } from "jotai";
 import RoomExistence from "../components/Main/RoomExistence";
 import { getFindRoomPostData, regionAll } from "../components/Main/ApiCall";
 import { isSelectedFindRoomAtom, isSelectedHasRoomAtom, recommendAtom, regionIdAtom } from "../components/Main/Jotai";
@@ -15,6 +13,8 @@ import { getUserId } from "../components/API/TokenAction";
 import RecommendModal from "../components/Main/RecommendModal";
 import { JsonConfig } from "../components/API/AxiosModule";
 import { lazy } from "react";
+import { Board } from "../utils/types";
+import Loading from "../components/Loading/Loading";
 
 interface RegionProps {
   regionId: number;
@@ -22,27 +22,7 @@ interface RegionProps {
   sigg: string;
 }
 
-interface Board {
-  postId: number;
-  nickName: string;
-  address: string;
-  likesFlag: boolean;
-  userFile: string;
-  createdAt: string;
-  gender: number;
-  content: string;
-  roomFiles: string;
-  commentCount: string;
-  memberId: number;
-}
-
-interface GetFindRoomProps {
-  setBoardOneList: Dispatch<SetStateAction<Board[]>>;
-  regionId?: number;
-  setLastPostId: Dispatch<SetStateAction<number | null>>;
-  userId: number | undefined;
-}
-
+//필요할때 동적으로 함수 불러오기
 const ApiCallModule = await import("../components/Main/ApiCall");
 const loadMoreFindRoom = ApiCallModule.loadMoreFindRoom;
 const loadMoreHasRoom = ApiCallModule.loadMoreHasRoom;
@@ -68,30 +48,15 @@ const MainPage = () => {
   const userId = getUserId();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!userId) return;
-
-    //추천인 불러오기
-    JsonConfig("get", `api/personality/${userId}/1`, null, undefined)
-      .then((response) => {
-        setRecommendData(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [userId]);
-
-  //방 구해요 게시물 불러오는 함수 useCallback 씌우기 (의존성 배열 issue)
-  const getFindRoomPostDataCall = useCallback(async ({ setBoardOneList, regionId, setLastPostId, userId }: GetFindRoomProps) => {
-    await getFindRoomPostData({ setBoardOneList, regionId, setLastPostId, userId });
-  }, []);
+  const getFindRoomPostDataProps = { setBoardOneList, regionId, setLastPostId, userId };
+  const getHasRoomPostDataProps = { setBoardTwoList, regionId, setLastPostId, userId };
 
   //방구해요 버튼 클릭 시
   const handleFindRoom = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
     setBoardTwoList([]);
     setIsSelectedHasRoom(false);
-    getFindRoomPostDataCall({ setBoardOneList, regionId, setLastPostId, userId });
+    getFindRoomPostData(getFindRoomPostDataProps);
     setIsSelectedFindRoom(true);
   };
 
@@ -100,13 +65,7 @@ const MainPage = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
     setBoardOneList([]);
     setIsSelectedFindRoom(false);
-    getHasRoomPostData({
-      setBoardTwoList,
-      regionId,
-      setLastPostId,
-      userId,
-    });
-
+    getHasRoomPostData(getHasRoomPostDataProps);
     setIsSelectedHasRoom(true);
   };
 
@@ -118,19 +77,22 @@ const MainPage = () => {
   };
 
   //첫화면 지역데이터 가져오기
-  const regionAllCallback = useCallback(regionAll, [regionId, setRegionId, userId]);
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
     if (!userId) return;
-    regionAllCallback({
-      setRegionList,
-      setUserRegion,
-      setRegionId,
-      regionId,
-      userId,
-    });
-  }, [regionAllCallback, regionId, setRegionId, setRegionList, userId]);
+
+    //추천인 불러오기
+    JsonConfig("get", `api/personality/${userId}/1`, null, undefined)
+      .then((response) => {
+        setRecommendData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    const props = { setRegionList, setUserRegion, setRegionId, regionId, userId };
+    regionAll(props);
+  }, [regionId, userId]);
 
   //첫화면 모든지역 게시물 가져오기(방구해요)
   useEffect(() => {
@@ -143,22 +105,18 @@ const MainPage = () => {
     if (userRegion && userId) {
       setRegionName(userRegionSigg[0]?.sigg);
     }
+
     const fetchData = async () => {
       if (userRegion && isSelectedFindRoom && userId) {
-        await getFindRoomPostDataCall({ setBoardOneList, regionId, setLastPostId, userId });
+        await getFindRoomPostData(getFindRoomPostDataProps);
         setLoading(false);
       } else if (userRegion && isSelectedHasRoom && userId) {
-        await getHasRoomPostData({
-          setBoardTwoList,
-          regionId,
-          setLastPostId,
-          userId,
-        });
+        await getHasRoomPostData(getHasRoomPostDataProps);
         setLoading(false);
       }
     };
     fetchData();
-  }, [getFindRoomPostDataCall, isSelectedFindRoom, isSelectedHasRoom, regionId, regionList, userId, userRegion]);
+  }, [regionList, userId]);
 
   // intersection callback 함수 작성
   const intersectionCallback = useCallback(
@@ -166,9 +124,11 @@ const MainPage = () => {
       const entry = entries[0];
       if (entry.isIntersecting) {
         if (isSelectedFindRoom) {
-          loadMoreFindRoom({ regionId, lastPostId, userId, setBoardOneList, setLastPostId });
+          const props = { regionId, lastPostId, userId, setBoardOneList, setLastPostId };
+          loadMoreFindRoom(props);
         } else if (isSelectedHasRoom) {
-          loadMoreHasRoom({ regionId, lastPostId, userId, setBoardTwoList, setLastPostId });
+          const props = { regionId, lastPostId, userId, setBoardTwoList, setLastPostId };
+          loadMoreHasRoom(props);
         }
       }
     },
@@ -191,15 +151,10 @@ const MainPage = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
     if (userId) {
       if (isSelectedFindRoom) {
-        getFindRoomPostData({ setBoardOneList, regionId, setLastPostId, userId });
+        getFindRoomPostData(getFindRoomPostDataProps);
       }
       if (isSelectedHasRoom) {
-        getHasRoomPostData({
-          setBoardTwoList,
-          regionId,
-          setLastPostId,
-          userId,
-        });
+        getHasRoomPostData(getHasRoomPostDataProps);
       }
       setActiveAreaModal(false);
       setRegionName(region.sigg);
@@ -222,11 +177,7 @@ const MainPage = () => {
               <RxTriangleDown className="text-3xl text-main-300" />
             </div>
             {activeAreaModal && (
-              <Suspense
-                fallback={
-                  <h1 style={{ width: "100vw", height: "100vh", background: "#EEF1FF", textAlign: "center", fontSize: "10px" }}>Loading...</h1>
-                }
-              >
+              <Suspense fallback={<Loading />}>
                 <AreaModal regionList={regionList} handleRegionArea={handleRegionArea} />
               </Suspense>
             )}
@@ -236,11 +187,7 @@ const MainPage = () => {
         </section>
 
         <section className=" mt-20 pt-20">
-          {loading && (
-            <div className="flex justify-center">
-              <img src="/loading.gif" className="w-16 cursor-pointer" />
-            </div>
-          )}
+          {loading && <Loading />}
           {boardOneList?.length > 0
             ? boardOneList.map((b, i) => {
                 return (
@@ -276,7 +223,7 @@ const MainPage = () => {
         </section>
       </div>
       <div ref={target}></div>
-      <Footer selected={false} userId={userId} />{" "}
+      <Footer selected={false} userId={userId} />
     </>
   );
 };
