@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { CookiesProvider } from "react-cookie";
 import { lazy, Suspense } from "react";
 import SigninPage from "./pages/SigninPage";
+import Loading from "./components/Loading/Loading";
+
 const queryClient = new QueryClient();
 const MainPage = lazy(() => import("./pages/MainPage"));
 const PostPage = lazy(() => import("./pages/PostPage"));
@@ -24,9 +26,7 @@ function App() {
     <Provider>
       <CookiesProvider>
         <QueryClientProvider client={queryClient}>
-          <Suspense
-            fallback={<h1 style={{ width: "100vw", height: "100vh", background: "#EEF1FF", textAlign: "center", fontSize: "40px" }}>Loading...</h1>}
-          >
+          <Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/" element={<SigninPage />}></Route>
               <Route path="/login/oauth2/code/kakao" element={<GetCode />}></Route>
