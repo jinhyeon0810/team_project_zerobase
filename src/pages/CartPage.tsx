@@ -21,7 +21,6 @@ interface CartProps {
 
 const CartPage = () => {
   const [lastPostId, setLastPostId] = useState();
-
   const [cartList, setCartList] = useState<CartProps[]>([]);
   const target = useRef<HTMLDivElement | null>(null);
   const userId = getUserId();
@@ -91,27 +90,13 @@ const CartPage = () => {
               <img src="/loading.gif" className="w-16 cursor-pointer" />
             </div>
           )}
-          {cartList?.map(
-            (cart: {
-              postId: number;
-              nickName: string;
-              address: string;
-              likesFlag: boolean;
-              userFile: string;
-              createdAt: string;
-              gender: number;
-              content: string;
-              roomFiles: string;
-              commentCount: string;
-              memberId: number;
-            }) => {
-              return (
-                <div key={cart.postId}>
-                  <BoardCard board={cart} userId={userId} boardList={cartList} setBoardList={setCartList} />
-                </div>
-              );
-            }
-          )}
+          {cartList?.map((cart: CartProps) => {
+            return (
+              <div key={cart.postId}>
+                <BoardCard board={cart} userId={userId} boardList={cartList} setBoardList={setCartList} />
+              </div>
+            );
+          })}
           {!loading && cartList.length === 0 && <div className="h-screen text-center p-10 text-xl"> 찜한 게시물이 없습니다 😂</div>}
           <div ref={target}></div>
         </section>

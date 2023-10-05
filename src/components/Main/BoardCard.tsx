@@ -10,53 +10,17 @@ import { AiOutlineCalendar } from "react-icons/ai";
 import { JsonConfig } from "../API/AxiosModule";
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
-
-interface boardProps {
-  postId: number;
-  nickName: string;
-  address: string;
-  likesFlag: boolean;
-  userFile: string;
-  createdAt: string;
-  gender: number;
-  content: string;
-  roomFiles: string;
-  commentCount: string;
-  memberId: number;
-}
+import { Board } from "../../utils/types";
 
 interface Props {
   userId: number | undefined;
-  board: {
-    postId: number;
-    nickName: string;
-    address: string;
-    likesFlag: boolean;
-    userFile: string;
-    createdAt: string;
-    gender: number;
-    content: string;
-    roomFiles: string;
-    commentCount: string;
-    memberId: number;
-  };
-  boardList: {
-    postId: number;
-    nickName: string;
-    address: string;
-    likesFlag: boolean;
-    userFile: string;
-    createdAt: string;
-    gender: number;
-    content: string;
-    roomFiles: string;
-    commentCount: string;
-    memberId: number;
-  }[];
-  setBoardList: Dispatch<SetStateAction<boardProps[]>>;
+  board: Board;
+  boardList: Board[];
+  setBoardList: Dispatch<SetStateAction<Board[]>>;
 }
 
-const BoardCard: React.FC<Props> = ({ userId, board, boardList, setBoardList }: Props) => {
+const BoardCard: React.FC<Props> = (props: Props) => {
+  const { userId, board, boardList, setBoardList } = props;
   const [like, setLike] = useState<boolean | null>();
   const [showPostButtons, setShowPostButtons] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -64,8 +28,6 @@ const BoardCard: React.FC<Props> = ({ userId, board, boardList, setBoardList }: 
   useEffect(() => {
     setLike(board.likesFlag);
   }, [board.likesFlag]);
-  // console.log("boardLikes :", board.likesFlag);
-  // console.log("Likes :", like);
 
   const postButtonOpen = (e: React.TouchEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -75,11 +37,9 @@ const BoardCard: React.FC<Props> = ({ userId, board, boardList, setBoardList }: 
   const onClickHeart = (e: React.TouchEvent<HTMLButtonElement> | React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!like) {
-      JsonConfig("post", `api/likes/${board.postId}/${userId}`, null, undefined).then((res) => {
-        console.log(res);
+      JsonConfig("post", `api/likes/${board.postId}/${userId}`, null, undefined).then(() => {
         setBoardList(
           boardList.map((b) => {
-            console.log(b);
             return b.postId === board.postId ? { ...b, likesFlag: true } : b;
           })
         );
@@ -89,7 +49,6 @@ const BoardCard: React.FC<Props> = ({ userId, board, boardList, setBoardList }: 
         console.log(res);
         setBoardList(
           boardList.map((b) => {
-            console.log(b);
             return b.postId === board.postId ? { ...b, likesFlag: false } : b;
           })
         );
@@ -129,7 +88,6 @@ const BoardCard: React.FC<Props> = ({ userId, board, boardList, setBoardList }: 
                     <div className="flex items-center text-base font-semibold text-black">
                       {board.nickName}
                       <div className=" text-base ml-0.5">
-                        {" "}
                         {board.gender === 1 ? <GiMale className="text-blue-400" /> : <GiFemale className="text-red-400" />}
                       </div>
                     </div>

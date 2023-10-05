@@ -1,24 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { JsonConfig } from "../API/AxiosModule";
-
-interface Board {
-  postId: number;
-  nickName: string;
-  address: string;
-  likesFlag: boolean;
-  userFile: string;
-  createdAt: string;
-  gender: number;
-  content: string;
-  roomFiles: string;
-  commentCount: string;
-  memberId: number;
-}
-interface RegionProps {
-  regionId: number;
-  sido: string;
-  sigg: string;
-}
+import { Board, RegionProps } from "../../utils/types";
 
 interface RegionAllProps {
   setRegionList: Dispatch<SetStateAction<RegionProps[]>>;

@@ -1,12 +1,8 @@
-interface Region {
-  sido: string;
-  sigg: string;
-  regionId: number;
-}
+import { RegionProps } from "../../utils/types";
 
 interface AreaModalProps {
-  regionList: Region[];
-  handleRegionArea: (region: Region) => void;
+  regionList: RegionProps[];
+  handleRegionArea: (region: RegionProps) => void;
 }
 
 const AreaModal = ({ regionList, handleRegionArea }: AreaModalProps) => {

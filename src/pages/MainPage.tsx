@@ -13,14 +13,8 @@ import { getUserId } from "../components/API/TokenAction";
 import RecommendModal from "../components/Main/RecommendModal";
 import { JsonConfig } from "../components/API/AxiosModule";
 import { lazy } from "react";
-import { Board } from "../utils/types";
+import { Board, RegionProps } from "../utils/types";
 import Loading from "../components/Loading/Loading";
-
-interface RegionProps {
-  regionId: number;
-  sido: string;
-  sigg: string;
-}
 
 //필요할때 동적으로 함수 불러오기
 const ApiCallModule = await import("../components/Main/ApiCall");

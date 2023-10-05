@@ -24,10 +24,8 @@ interface TokenResponse {
 const Signin = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  //const navigate: NavigateFunction = useNavigate();
   const redirect_uri = "https://iamnotalone.vercel.app/login/oauth2/code/kakao";
   const Rest_api_key = "f97c55d9d92ac41363b532958776d378";
-  //const client_secret = "2y9KooWag1nZnGRfPeHbZeY8yiian4ty";
   const setSendMessage = useSetAtom(lastMessage);
   const navigate = useNavigate();
 
@@ -82,30 +80,6 @@ const Signin = () => {
     }, 3000);
   };
 
-  // const handleAuthorizationCode = async() => {
-
-  //   //console.log("^^^^");
-  //   //const urlParams = new URLSearchParams(window.location.search);
-  //   //console.log(urlParams);
-  //   //const code = urlParams.get('code');
-  //   const url = new URL(window.location.href);
-  //   console.log(url);
-  //   console.log(url.searchParams);
-  //   const code = url.searchParams.get("code");
-  //   console.log(code);
-  //   if (code) {
-  //     console.log(code);
-  //     createKakaoLoginToServerLoginConfig("GET",code).then((response) => {
-  //       console.log(response);
-  //     })
-  //   .catch((error)=>{
-  //       console.log("에러")
-  //       console.error(error);
-  //     });
-  //   }
-
-  // };
-
   return (
     <div className="w-full h-screen pt-11 bg-main-100">
       <img className="mx-auto w-44" src="logo.png" alt="" />
@@ -151,7 +125,6 @@ const Signin = () => {
     </div>
   );
 };
-
 const handleTokenResponse = async (
   tokenResponse: TokenResponse,
   accessTokenExpire = -1,
@@ -171,14 +144,14 @@ const handleTokenResponse = async (
     if (isTokenValidResponse === true) {
       if (tokenResponse.firstLogin === true) {
         const userId = getUserId();
+
         navigate(`/socialsignup/${userId}`);
-        //window.location.href = `http://localhost:5173/socialsignup/${userId}`;
       } else {
         await socketAction(setSendMessage);
+
         navigate("/main");
-        //window.location.href = "https://iamnotalone.vercel.app/main";
       }
     }
   }
 };
-export { handleTokenResponse, Signin };
+export { Signin, handleTokenResponse };

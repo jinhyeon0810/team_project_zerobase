@@ -1,3 +1,9 @@
+export interface RegionProps {
+  regionId: number;
+  sido: string;
+  sigg: string;
+}
+
 export interface Board {
   postId: number;
   nickName: string;
